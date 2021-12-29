@@ -10,8 +10,6 @@ import (
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 )
 
-var Mylog = MyLogFunc()
-
 type DocQuery map[string]interface{}
 type EsQuery map[string]interface{}
 type MatchQuery map[string]interface{}

@@ -48,5 +48,5 @@ clear_interval: 600
 http_port: 5100
 tcp_port: 5200
 #服务日志目录
-log_dir: "E:\\code\\go\\src\\dongxin_es\\log\\"
+log_dir: "E:\\code\\go\\src\\essync\\log\\"
 
