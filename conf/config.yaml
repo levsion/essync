@@ -1,0 +1,52 @@
+source_es:
+  hosts: ["http://130.20.160.109:9200"]
+  user:
+  password:
+  indexName: interface_call_log_qa
+  docType: "log"
+  http_config:
+    MaxIdleConns: 1000
+    MaxIdleConnsPerHost: 100
+    MaxConnsPerHost: 10000
+    IdleConnTimeout: 60
+    ResponseHeaderTimeout: 5
+    DialTimeout: 5
+    DialKeepAlive: 30
+
+target_es:
+  hosts: ["http://127.0.0.1:9200"]
+  user:
+  password:
+  indexName: daiban_request_log
+  docType: "_doc"
+  http_config:
+    MaxIdleConns: 1000
+    MaxIdleConnsPerHost: 100
+    MaxConnsPerHost: 10000
+    IdleConnTimeout: 60
+    ResponseHeaderTimeout: 5
+    DialTimeout: 5
+    DialKeepAlive: 30
+
+#排序字段
+sort_field: "callDate"
+#int64,date
+sort_field_type: "int64"
+#时间字段：date,long
+date_field: "callDate"
+#int64,date
+date_field_type: "int64"
+#同步间隔，秒数
+sync_interval: 10
+#每次同步条数
+sync_count: 100
+#保留日志天数，0代表不清理
+log_keep_day: 30
+#清理间隔秒
+clear_interval: 600
+#监听端口
+http_port: 5100
+tcp_port: 5200
+#服务日志目录
+log_dir: "E:\\code\\go\\src\\dongxin_es\\log\\"
+
