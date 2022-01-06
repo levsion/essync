@@ -44,4 +44,6 @@ type EsConfig struct {
 	HttpPort      int           `yaml:"http_port"`
 	TcpPort       int           `yaml:"tcp_port"`
 	LogDir        string        `yaml:"log_dir"`
+	Daemon        bool          `yaml:"daemon"`
+	PidFile       string        `yaml:"pid_file"`
 }

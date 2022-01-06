@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/phachon/go-logger"
 	"gopkg.in/yaml.v2"
+	"io"
 	"io/ioutil"
 	"log"
 	"net"
@@ -65,6 +66,7 @@ func main() {
 
 	go getData()
 	go clearData()
+	go SavePid()
 
 	r.GET("/_healthy", func(c *gin.Context) {
 		c.String(200, "I am very healthy")
@@ -88,8 +90,8 @@ func main() {
 		}
 	}()
 	logger.Info("Server Start ...")
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, os.Kill)
 	<-quit
 	logger.Info("Server Shutdown ...")
 }
@@ -136,7 +138,19 @@ func getData() {
 		if len(res.List) > 0 {
 			//levsion需要配置calldate
 			begin_sort = res.List[0].CallDate
+		} else {
+			logKeepDay := yaml_conf.LogKeepDay
+			clearDate := time.Now().AddDate(0, 0, -logKeepDay)
+			if logKeepDay > 0 {
+				if sort_field_type == "int64" {
+					begin_sort = clearDate.Unix()
+				} else {
+					begin_sort = clearDate
+				}
+
+			}
 		}
+
 		matchQuery = map[string]interface{}{
 			"query": map[string]interface{}{
 				"range": map[string]interface{}{
@@ -282,4 +296,39 @@ func getLogNew(logFile string) int {
 		}
 	}
 	return errorNew
+}
+
+func SavePid() bool {
+	pidFile := yaml_conf.PidFile
+	var f *os.File
+	var err error
+	var err1 error
+	if _, err = os.Stat(pidFile); os.IsNotExist(err) {
+		f, err1 = os.Create(pidFile) //创建文件
+		defer f.Close()
+		if err1 != nil {
+			logger.Error("SavePid: " + err1.Error())
+			return false
+		}
+	} else {
+		f, err1 = os.OpenFile(pidFile, os.O_CREATE, 0666)
+		defer f.Close()
+		if err1 != nil {
+			logger.Error("SavePid: " + err1.Error())
+			return false
+		}
+	}
+	pid := os.Getpid()
+	pidString := strconv.Itoa(pid)
+	if _, err = io.WriteString(f, pidString); err != nil {
+		logger.Error("SavePid: " + err.Error())
+		return false
+	}
+	/*
+		byteString := []byte(pidString)
+		if err = ioutil.WriteFile(pidFile, byteString, 0666); err != nil {
+			logger.Error("SavePid: " + err.Error())
+		}
+	*/
+	return true
 }

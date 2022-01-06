@@ -49,4 +49,7 @@ http_port: 5100
 tcp_port: 5200
 #服务日志目录
 log_dir: "E:\\code\\go\\src\\essync\\log\\"
-
+#是否后台运行
+daemon: true
+#pid file
+pid_file: "E:\\code\\go\\src\\essync\\log\\essync.pid"

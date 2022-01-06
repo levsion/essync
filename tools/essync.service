@@ -1,0 +1,20 @@
+#vim /usr/lib/systemd/system/essync.service
+
+[Unit]
+Description=elasticsearch sync project
+After=essync.service
+
+[Service]
+Type=forking
+User=root
+Group=root
+PIDFile=/home/levsion/go/bin/essync.pid
+ExecStart=/bin/sh /home/levsion/go/bin/startup.sh
+ExecReload=/bin/kill -USR2 $MAINPID
+ExecStop=/bin/kill -INT $MAINPID
+PrivateTmp=true
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
