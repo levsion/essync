@@ -132,11 +132,9 @@ func daemonProcce(nochdir, noclose int) (int, error) {
 	if syscall.Getppid() == 1 {
 		/* Change the file mode mask */
 		syscall.Umask(0)
-
 		if nochdir == 0 {
 			os.Chdir("/")
 		}
-
 		return 0, nil
 	}
 

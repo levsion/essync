@@ -19,6 +19,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -48,6 +49,7 @@ func main() {
 		Format:     "%millisecond_format% [%level_string%] %body%", // JsonFormat is false, logger message output to console format string
 	}
 	logger.Attach("console", go_logger.LOGGER_LEVEL_DEBUG, consoleConfig)
+
 	fileConfig := &go_logger.FileConfig{
 		//Filename: yaml_conf.LogDir + "essync.log", // The file name of the logger output, does not exist automatically
 		// If you want to separate separate logs into files, configure LevelFileName parameters.
@@ -91,7 +93,7 @@ func main() {
 	}()
 	logger.Info("Server Start ...")
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt, os.Kill)
+	signal.Notify(quit, os.Interrupt, os.Kill, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	logger.Info("Server Shutdown ...")
 }
@@ -307,21 +309,21 @@ func SavePid() bool {
 		f, err1 = os.Create(pidFile) //创建文件
 		defer f.Close()
 		if err1 != nil {
-			logger.Error("SavePid: " + err1.Error())
+			logger.Error("SavePid-create: " + err1.Error())
 			return false
 		}
 	} else {
 		f, err1 = os.OpenFile(pidFile, os.O_CREATE, 0666)
 		defer f.Close()
 		if err1 != nil {
-			logger.Error("SavePid: " + err1.Error())
+			logger.Error("SavePid-open: " + err1.Error())
 			return false
 		}
 	}
 	pid := os.Getpid()
 	pidString := strconv.Itoa(pid)
 	if _, err = io.WriteString(f, pidString); err != nil {
-		logger.Error("SavePid: " + err.Error())
+		logger.Error("SavePid-write: " + err.Error())
 		return false
 	}
 	/*

@@ -1,15 +1,16 @@
 #vim /usr/lib/systemd/system/essync.service
+#systemctl daemon-reload
 
 [Unit]
 Description=elasticsearch sync project
 After=essync.service
 
 [Service]
-Type=forking
+Type=simple
 User=root
 Group=root
 PIDFile=/home/levsion/go/bin/essync.pid
-ExecStart=/bin/sh /home/levsion/go/bin/startup.sh
+ExecStart=/home/levsion/go/bin/essync /home/levsion/go/bin/config.yaml >/dev/null 2>&1
 ExecReload=/bin/kill -USR2 $MAINPID
 ExecStop=/bin/kill -INT $MAINPID
 PrivateTmp=true

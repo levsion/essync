@@ -15,8 +15,8 @@ source_es:
 
 target_es:
   hosts: ["http://127.0.0.1:9200"]
-  user:
-  password:
+  user: elastic
+  password: elastic2022
   indexName: daiban_request_log
   docType: "_doc"
   http_config:
