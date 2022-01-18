@@ -8,6 +8,7 @@ import (
 	"essync/conf"
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
+	"log"
 )
 
 type DocQuery map[string]interface{}
@@ -84,6 +85,13 @@ type resCreate struct {
 		Successful int `json:"successful"`
 		Failed     int `json:"failed"`
 	}
+}
+type resInfo struct {
+	IndexName string          `json:"_index"`
+	Type      string          `json:"_type"`
+	Id        string          `json:"_id"`
+	Found     bool            `json:"found"`
+	Source    json.RawMessage `json:"_source"`
 }
 
 var MatchQueryDemo = map[string]interface{}{
@@ -261,14 +269,20 @@ func Delete(es *elasticsearch.Client, indexName string, id string) (resData, err
 	return resTmp, nil
 }
 
-func Get(es *elasticsearch.Client) (resData, error) {
-	resTmp := resData{}
-	res, err := es.Get("demo", "esd")
+func Get(es *elasticsearch.Client, indexName string, id string) (resInfo, error) {
+	resTmp := resInfo{}
+	res, err := es.Get(indexName, id)
 	if err != nil {
 		return resTmp, err
 	}
 	defer res.Body.Close()
-	return resTmp, nil
+	var rp resInfo
+	log.Println(res.Body)
+	err1 := json.NewDecoder(res.Body).Decode(&rp)
+	if err1 != nil {
+		return resTmp, err
+	}
+	return rp, nil
 }
 
 func Update(es *elasticsearch.Client) (resData, error) {
