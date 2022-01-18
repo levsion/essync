@@ -250,8 +250,8 @@ func getSourceClient() (*elasticsearch.Client, error) {
 func getTargetClient() (*elasticsearch.Client, error) {
 	cfg := elasticsearch.Config{
 		Addresses: yaml_conf.TargetEs.Hosts,
-		Username:  "elastic",
-		Password:  "elastic2022",
+		Username:  yaml_conf.TargetEs.User,
+		Password:  yaml_conf.TargetEs.Password,
 		Transport: &http.Transport{
 			MaxIdleConns:          yaml_conf.TargetEs.HttpConfig.MaxIdleConns,                  //所有host的连接池缓存最大连接数量，默认无穷大
 			MaxIdleConnsPerHost:   yaml_conf.TargetEs.HttpConfig.MaxIdleConnsPerHost,           //每个host的连接池缓存最大空闲连接数
